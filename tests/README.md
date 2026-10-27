@@ -119,7 +119,7 @@ tests/integration/consumer/test_consumer_error.py::test_consume_error [2020-12-0
 
 ### Running with Tox
 
-Tox can be used to test against various supported Python versions (py27, py36, py38):
+Tox can be used to test against various supported Python versions (py311, py312, py313):
 
 1. You need to have tox installed:
 

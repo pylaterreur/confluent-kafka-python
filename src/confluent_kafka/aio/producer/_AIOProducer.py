@@ -15,13 +15,7 @@
 import asyncio
 import concurrent.futures
 import logging
-from typing import Any, Callable, Dict, Optional
-
-try:
-    from typing import Self
-except ImportError:
-    # FIXME: drop fallback once we require Python >= 3.11
-    from typing_extensions import Self
+from typing import Any, Callable, Dict, Optional, Self
 
 import confluent_kafka
 

@@ -4334,13 +4334,6 @@ static struct PyModuleDef cimpl_moduledef = {
 static PyObject *_init_cimpl(void) {
         PyObject *m;
 
-/* PyEval_InitThreads became deprecated in Python 3.9 and will be removed in
- * Python 3.11. Prior to Python 3.7, this call was required to initialize the
- * GIL. */
-#if PY_VERSION_HEX < 0x03090000
-        PyEval_InitThreads();
-#endif
-
         if (PyType_Ready(&KafkaErrorType) < 0)
                 return NULL;
         if (PyType_Ready(&MessageType) < 0)

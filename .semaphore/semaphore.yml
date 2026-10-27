@@ -14,7 +14,7 @@ global_job_config:
       - checkout
       - mkdir artifacts
 blocks:
-  - name: "Wheels: OSX x64 - Python 3.8-3.12"
+  - name: "Wheels: OSX x64 - Python 3.11-3.12"
     run:
       when: "tag =~ '.*'"
     dependencies:
@@ -48,7 +48,7 @@ blocks:
         - name: OS_NAME
           value: osx
         - name: CIBW_SKIP
-          value: cp36-* cp37-* cp38-* cp39-* cp310-* cp311-* cp312-*
+          value: cp311-* cp312-*
         - name: CIBW_ENVIRONMENT_MACOS
           value: MACOSX_DEPLOYMENT_TARGET=13
       jobs:
@@ -58,11 +58,9 @@ blocks:
             - sem-version python 3.13
             - pip install uv
             - PIP_INSTALL_OPTIONS="--user" tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse
-            # CPython 3.15 needs cibuildwheel 4, which no longer builds 3.8 wheels, so 3.15 gets a second pass with it.
-            - CIBW_BUILD="cp315-* cp315t-*" PIP_INSTALL_OPTIONS="--user" tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse 4.3.4
             - tar -czf wheelhouse-macOS-${ARCH}-py313-plus.tgz wheelhouse
             - artifact push workflow wheelhouse-macOS-${ARCH}-py313-plus.tgz --destination artifacts/wheels-${OS_NAME}-${ARCH}-py313-plus.tgz/
-  - name: "Wheels: OSX arm64 - Python 3.8-3.12"
+  - name: "Wheels: OSX arm64 - Python 3.11-3.12"
     run:
       when: "tag =~ '.*'"
     dependencies:
@@ -100,7 +98,7 @@ blocks:
         - name: CIBW_ARCHS
           value: arm64
         - name: CIBW_SKIP
-          value: cp38-* cp39-* cp310-* cp311-* cp312-*
+          value: cp311-* cp312-*
         - name: CIBW_ENVIRONMENT_MACOS
           value: MACOSX_DEPLOYMENT_TARGET=13
       jobs:
@@ -110,8 +108,6 @@ blocks:
             - sem-version python 3.13
             - pip install uv
             - PIP_INSTALL_OPTIONS="--user" tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse
-            # CPython 3.15 needs cibuildwheel 4, which no longer builds 3.8 wheels, so 3.15 gets a second pass with it.
-            - CIBW_BUILD="cp315-* cp315t-*" PIP_INSTALL_OPTIONS="--user" tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse 4.3.4
             - tar -czf wheelhouse-macOS-${ARCH}-py313-plus.tgz wheelhouse
             - artifact push workflow wheelhouse-macOS-${ARCH}-py313-plus.tgz --destination artifacts/wheels-${OS_NAME}-${ARCH}-py313-plus.tgz/
   - name: "Wheels: Linux arm64"
@@ -133,8 +129,6 @@ blocks:
             - sem-version python 3.13
             - pip install uv
             - ./tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse
-            # CPython 3.15 needs cibuildwheel 4, which no longer builds 3.8 wheels, so 3.15 gets a second pass with it.
-            - CIBW_BUILD="cp315-* cp315t-*" ./tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse 4.3.4
             - tar -czf wheelhouse-linux-${ARCH}.tgz wheelhouse
             - artifact push workflow wheelhouse-linux-${ARCH}.tgz --destination artifacts/wheels-${OS_NAME}-${ARCH}.tgz/
   - name: "Wheels: Linux s390x"
@@ -156,8 +150,6 @@ blocks:
             - sem-version python 3.13
             - pip install uv
             - ./tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse
-            # CPython 3.15 needs cibuildwheel 4, which no longer builds 3.8 wheels, so 3.15 gets a second pass with it.
-            - CIBW_BUILD="cp315-* cp315t-*" ./tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse 4.3.4
             - tar -czf wheelhouse-linux-${ARCH}.tgz wheelhouse
             - artifact push workflow wheelhouse-linux-${ARCH}.tgz --destination artifacts/wheels-${OS_NAME}-${ARCH}.tgz/
   - name: "Wheels: Linux x64"
@@ -179,8 +171,6 @@ blocks:
             - sem-version python 3.11
             - pip install uv
             - ./tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse
-            # CPython 3.15 needs cibuildwheel 4, which no longer builds 3.8 wheels, so 3.15 gets a second pass with it.
-            - CIBW_BUILD="cp315-* cp315t-*" ./tools/wheels/build-wheels.sh "${LIBRDKAFKA_VERSION#v}" wheelhouse 4.3.4
             - tar -czf wheelhouse-linux-${ARCH}.tgz wheelhouse
             - artifact push workflow wheelhouse-linux-${ARCH}.tgz --destination artifacts/wheels-${OS_NAME}-${ARCH}.tgz/
   - name: "Wheels: Windows"
@@ -213,10 +203,6 @@ blocks:
             - sem-version python 3.11
             - bash tools/mingw-w64/semaphore_commands.sh
             - bash tools/wheels/install-librdkafka.sh $env:LIBRDKAFKA_VERSION.TrimStart("v") dest
-            - tools/wheels/build-wheels.bat x64 win_amd64 dest wheelhouse
-            # CPython 3.15 needs cibuildwheel 4, which no longer builds 3.8 wheels, so 3.15 gets a second pass with it.
-            - python -m pip install cibuildwheel==4.3.4
-            - $env:CIBW_BUILD = "cp315-win_amd64 cp315t-win_amd64"
             - tools/wheels/build-wheels.bat x64 win_amd64 dest wheelhouse
             - tar -czf wheelhouse-windows-${Env:ARCH}.tgz wheelhouse
             - artifact push workflow wheelhouse-windows-${Env:ARCH}.tgz --destination artifacts/wheels-${Env:OS_NAME}-${Env:ARCH}.tgz/
@@ -474,7 +460,7 @@ blocks:
         - name: Verify
           commands:
             - export ARCH=x64
-            - sem-version python 3.9
+            - sem-version python 3.11
             - artifact pull workflow artifacts
             - cd artifacts && ls *.tgz |xargs -n1 tar -xvf && cd ..
             - tools/test-wheels.sh artifacts/wheelhouse
@@ -482,7 +468,7 @@ blocks:
           commands:
             - export ARCH=x64
             # sem-version only provides a pip to bootstrap uv; the wheel runs in the 3.14t venv uv creates.
-            - sem-version python 3.9
+            - sem-version python 3.11
             - pip install uv
             - tools/verify-free-threaded-job.sh
   - name: "Wheel Verification: Linux arm64"
@@ -501,7 +487,7 @@ blocks:
         - name: Verify
           commands:
             - export ARCH=arm64
-            - sem-version python 3.9
+            - sem-version python 3.11
             - artifact pull workflow artifacts
             - cd artifacts && ls *.tgz |xargs -n1 tar -xvf && cd ..
             - tools/test-wheels.sh artifacts/wheelhouse
@@ -509,7 +495,7 @@ blocks:
           commands:
             - export ARCH=arm64
             # sem-version only provides a pip to bootstrap uv; the wheel runs in the 3.14t venv uv creates.
-            - sem-version python 3.9
+            - sem-version python 3.11
             - pip install uv
             - tools/verify-free-threaded-job.sh
   - name: "Wheel Verification: Linux s390x"
@@ -528,7 +514,7 @@ blocks:
         - name: Verify
           commands:
             - export ARCH=s390x
-            - sem-version python 3.9
+            - sem-version python 3.11
             - artifact pull workflow artifacts
             - cd artifacts && ls *.tgz |xargs -n1 tar -xvf && cd ..
             - tools/test-wheels.sh artifacts/wheelhouse
@@ -543,7 +529,7 @@ blocks:
     run:
       when: "tag =~ '.*'"
     dependencies:
-      - "Wheels: OSX x64 - Python 3.8-3.12"
+      - "Wheels: OSX x64 - Python 3.11-3.12"
       - "Wheels: OSX x64 - Python 3.13-3.15"
     task:
       agent:
@@ -582,7 +568,7 @@ blocks:
     run:
       when: "tag =~ '.*'"
     dependencies:
-      - "Wheels: OSX arm64 - Python 3.8-3.12"
+      - "Wheels: OSX arm64 - Python 3.11-3.12"
       - "Wheels: OSX arm64 - Python 3.13-3.15"
     task:
       agent:

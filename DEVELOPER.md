@@ -6,7 +6,7 @@ This document provides information useful to developers working on confluent-kaf
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.11 or higher
 - Git
 - librdkafka (for Kafka functionality)
 
@@ -61,8 +61,6 @@ C_INCLUDE_PATH=/path/to/include LIBRARY_PATH=/path/to/lib python -m build
 Alternative setup instructions tested with python 3.11
 
 ```bash
-# Modify pyproject.toml to require python version >=3.11
-# This fixes the cel-python dependency conflict
 uv venv --python 3.11
 source .venv/bin/activate
 

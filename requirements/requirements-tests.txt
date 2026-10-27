@@ -9,12 +9,11 @@ pytest
 pytest-timeout
 requests-mock
 respx
-# Lets respx mock httpx2 on Python >=3.10.
-pytest-httpx2; python_version >= "3.10"
+# Lets respx mock httpx2.
+pytest-httpx2
 pytest_cov
 pluggy<1.6.0
 pytest-asyncio
-async-timeout
 
 # Formatting tools
 black>=24.0.0

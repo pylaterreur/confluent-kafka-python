@@ -36,13 +36,7 @@ maintenance burden and get type hints directly from the implementation.
 
 import builtins
 import contextvars
-from typing import Any, Callable, Dict, Generic, List, Literal, Optional, Set, Tuple, Union, overload
-
-try:
-    from typing import Self
-except ImportError:
-    # FIXME: drop fallback once we require Python >= 3.11
-    from typing_extensions import Self
+from typing import Any, Callable, Dict, Generic, List, Literal, Optional, Self, Set, Tuple, Union, overload
 
 # PEP 696 defaults land in typing on Python 3.13; import unconditionally from
 # typing_extensions, which type checkers always have available. This file is a

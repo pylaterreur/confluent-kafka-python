@@ -16,12 +16,7 @@
 # limitations under the License.
 #
 import asyncio
-import sys
-
-if sys.version_info >= (3, 11):
-    from asyncio import timeout
-else:
-    from async_timeout import timeout  # noqa: F401
+from asyncio import timeout
 
 from confluent_kafka.cimpl import Consumer
 from confluent_kafka.error import ConsumeError, KeyDeserializationError, ValueDeserializationError

@@ -2,7 +2,7 @@
 #
 #
 # Get python versions required for cibuildwheel from their config and
-# install them. This implementation is based on cibuildwheel 3.2.1 and
+# install them. This implementation is based on cibuildwheel 2.16.2 and
 # 4.3.4 versions. Might need tweak if something changes in cibuildwheel.
 #
 # This was added as there is a permission issue when cibuildwheel
@@ -16,6 +16,10 @@ import shutil
 import sys
 import tomllib
 import urllib.request
+
+# Installed with cibuildwheel, which tools/wheels/build-wheels.sh installs first.
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
 
 cibuildwheel_version = sys.argv[1]
 config_url = (
@@ -48,6 +52,19 @@ print(f"Versions to build are '{build_versions}'")
 build_versions_regex_string = ("|".join(build_versions.split())).replace("*", ".*")
 build_versions_regex = re.compile(build_versions_regex_string)
 
+# cibuildwheel does not build the versions that requires-python in
+# pyproject.toml excludes, so do not install them either.
+with open('pyproject.toml', 'rb') as f:
+    requires_python = SpecifierSet(tomllib.load(f)['project']['requires-python'])
+print(f"Required Python versions are '{requires_python}'")
+
+
+def is_required_python(identifier):
+    # Parsed as cibuildwheel's BuildSelector does, e.g. cp314t-macosx_arm64 -> 3.14
+    py_ver_str = identifier.split('-', 1)[0].split('_', 1)[0].removesuffix('t')
+    return requires_python.contains(Version(f"{py_ver_str[2]}.{py_ver_str[3:]}.99"))
+
+
 py_versions_info = []
 
 for py_version_config in macos_config:
@@ -56,6 +73,7 @@ for py_version_config in macos_config:
         build_versions_regex.match(identifier)
         and not skip_versions_regex.match(identifier)
         and machine_arc_regex.match(identifier)
+        and is_required_python(identifier)
     ):
         pkg_url = py_version_config['url']
         py_versions_info.append((identifier, pkg_url))

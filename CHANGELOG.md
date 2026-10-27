@@ -2,8 +2,18 @@
 
 ## Unreleased
 
+### Upgrade considerations
+- Drop support for Python 3.8, 3.9 and 3.10 (end of life). Python 3.11 or later
+  is now required, and cp38, cp39 and cp310 wheels are no longer built.
+
 ### Enhancements
 - Add Python 3.15 and 3.15t wheels (#2299)
+
+### Fixes
+- Remove the `google-re2<1.1.20251105` cap from the `rules` extra. It only kept
+  the last google-re2 release with Python 3.9 wheels, and that release has no
+  Python 3.14 wheels, so installing `confluent-kafka[rules]` on Python 3.14 had
+  to build google-re2 from source.
 
 ## v2.16.1
 

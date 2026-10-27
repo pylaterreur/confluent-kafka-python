@@ -13,12 +13,7 @@
 # serve to show the default.
 
 import os
-
-try:
-    import tomllib
-except ImportError:
-    # For Python 3.12 and earlier
-    import tomli as tomllib
+import tomllib
 
 
 def _read_version_from_pyproject(pyproject_path=None):
